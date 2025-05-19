@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Certificate Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Aerial Platform Certificate Generator</h1>
+
+  <label for="machineSelect">Select Machine Template:</label>
+  <select id="machineSelect">
+    <option value="articulated">Articulated Boom</option>
+    <option value="scissor">Scissor Lift</option>
+    <option value="straight">Straight Boom</option>
+  </select>
+
+  <form id="certForm">
+    <h2>Client & Machine Info</h2>
+    <input type="text" id="primaryClient" placeholder="Primary Client" required />
+    <input type="text" id="secondaryClient" placeholder="Secondary Client" />
+    <input type="date" id="inspectionDate" required />
+    <input type="date" id="repairDate" />
+    <input type="text" id="makeModel" placeholder="Make & Model" required />
+
+    <!-- Add other inputs as needed -->
+
+    <h2>Checklist</h2>
+    <!-- Checklist simplified for example -->
+    <label>Chassis</label>
+    <select id="chassis" required>
+      <option value="Compliant">Compliant</option>
+      <option value="Non-Compliant">Non-Compliant</option>
+      <option value="Defects">Defects</option>
+    </select>
+
+    <!-- Add more checklist fields here -->
+
+    <button type="submit">Generate Certificate</button>
+  </form>
+
+  <div id="certificateOutput"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+body {
+  font-family: Arial, sans-serif;
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 10px;
+}
+
+input, select, button {
+  margin: 8px 0;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  font-size: 16px;
+}
+
+#certificateOutput {
+  margin-top: 30px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  white-space: pre-wrap;
+  background-color: #f9f9f9;
+}
+// Sample templates with placeholders
+const templates = {
+  articulated: `
+    Certificate of Inspection for Articulated Boom
+    ----------------------------------------------
+    Primary Client: {{primaryClient}}
+    Secondary Client: {{secondaryClient}}
+    Inspection Date: {{inspectionDate}}
+    Repair Date: {{repairDate}}
+    Make & Model: {{makeModel}}
+    Checklist:
+      - Chassis: {{chassis}}
+  `,
+  scissor: `
+    Certificate of Inspection for Scissor Lift
+    -----------------------------------------
+    Client: {{primaryClient}}
+    Inspection Date: {{inspectionDate}}
+    Machine: {{makeModel}}
+    Checklist:
+      - Chassis: {{chassis}}
+  `,
+  straight: `
+    Certificate of Inspection for Straight Boom
+    -------------------------------------------
+    Client: {{primaryClient}}
+    Secondary Client: {{secondaryClient}}
+    Dates: Inspection - {{inspectionDate}}, Repair - {{repairDate}}
+    Machine: {{makeModel}}
+    Checklist:
+      - Chassis: {{chassis}}
+  `
+};
+
+function fillTemplate(template, data) {
+  return template.replace(/\{\{(\w+)\}\}/g, (match, key) => data[key] || '');
+}
+
+document.getElementById('certForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const selectedTemplate = document.getElementById('machineSelect').value;
+
+  const formData = {
+    primaryClient: document.getElementById('primaryClient').value,
+    secondaryClient: document.getElementById('secondaryClient').value,
+    inspectionDate: document.getElementById('inspectionDate').value,
+    repairDate: document.getElementById('repairDate').value,
+    makeModel: document.getElementById('makeModel').value,
+    chassis: document.getElementById('chassis').value
+  };
+
+  const certText = fillTemplate(templates[selectedTemplate], formData);
+
+  document.getElementById('certificateOutput').textContent = certText;
+});
